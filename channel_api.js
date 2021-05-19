@@ -1,15 +1,10 @@
-var raw_connect = require('./lib/connect').connect;
+const { promisify } = require('util');
+const raw_connect = promisify(require('./lib/connect').connect);
 var ChannelModel = require('./lib/channel_model').ChannelModel;
-var Promise = require('bluebird');
 
 function connect(url, connOptions) {
-  return Promise.fromCallback(function(cb) {
-    return raw_connect(url, connOptions, cb);
-  })
-  .then(function(conn) {
-    return new ChannelModel(conn);
-  });
-};
+  return raw_connect(url, connOptions).then(conn => new ChannelModel(conn));
+}
 
 module.exports.connect = connect;
 module.exports.credentials = require('./lib/credentials');
